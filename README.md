@@ -35,4 +35,4 @@ The migration enables Row Level Security (RLS) for all business data. RLS is dat
 
 ## Authentication redirect URLs
 
-Add `http://localhost:3000` to Supabase Auth’s allowed redirect URLs for local development. Add the corresponding production origin when you deploy. CalcBuddy derives the redirect origin from the submitted request, so the same authentication code works locally and in production.
+Add `(https://calcbuddy-theta.vercel.app)` to Supabase Auth’s allowed redirect URLs for local development. Add the corresponding production origin when you deploy. CalcBuddy derives the redirect origin from the submitted request, so the same authentication code works locally and in production.
