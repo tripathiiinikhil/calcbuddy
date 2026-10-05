@@ -1,10 +1,14 @@
 import Link from "next/link";
-import { getAuthenticatedBusiness } from "@/lib/business";
+import { getOptionalBusiness } from "@/lib/optional-business";
 import { AppNav } from "@/components/app-nav";
 import { CashCounterHistoryItem } from "@/components/cash-counter-history-item";
+import { GuestCashHistory } from "@/components/guest-cash-history";
 
 export default async function CashCounterHistoryPage() {
-  const { supabase, business } = await getAuthenticatedBusiness();
+  const { business, isLoggedIn } = await getOptionalBusiness();
+  if (!business) return <div className="min-h-screen bg-slate-50 pb-20 md:pb-8"><AppNav isLoggedIn={isLoggedIn} /><GuestCashHistory /></div>;
+  const { createClient } = await import("@/lib/supabase/server");
+  const supabase = await createClient();
 
   const { data: reports, error } = await supabase
     .from("counter_reports")
@@ -14,7 +18,7 @@ export default async function CashCounterHistoryPage() {
 
   return (
     <div className="min-h-screen bg-slate-50 pb-20 md:pb-12">
-      <AppNav businessName={business.name} />
+      <AppNav businessName={business.name} businessType={business.business_type} logoPath={business.logo_path} isLoggedIn />
       <main className="mx-auto max-w-3xl px-4 py-6 sm:px-6">
         <div className="flex items-center justify-between mb-6">
           <div>

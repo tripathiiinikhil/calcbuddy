@@ -27,10 +27,7 @@ export async function createEstimate(payload: CreateEstimatePayload): Promise<{
   try {
     const { supabase, business } = await getAuthenticatedBusiness();
 
-    const customerName = payload.customer_name?.trim();
-    if (!customerName) {
-      return { error: "Customer name is required." };
-    }
+    const customerName = payload.customer_name?.trim() || "Walk-in customer";
 
     if (!payload.items || payload.items.length === 0) {
       return { error: "Please add at least one line item to the estimate." };

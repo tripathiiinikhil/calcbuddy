@@ -42,7 +42,17 @@ export async function signIn(_: FormState, formData: FormData): Promise<FormStat
   const supabase = await createClient();
   const { error } = await supabase.auth.signInWithPassword({ email, password });
   if (error) return { error: "We could not sign you in. Check your details and try again." };
-  redirect("/");
+
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: "Sign-in could not be verified. Please try again." };
+
+  const { data: membership, error: membershipError } = await supabase
+    .from("business_members")
+    .select("business_id")
+    .eq("user_id", user.id)
+    .maybeSingle();
+
+  redirect(!membershipError && !membership ? "/onboarding" : "/dashboard");
 }
 
 export async function signUp(_: FormState, formData: FormData): Promise<FormState> {

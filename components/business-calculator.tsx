@@ -10,7 +10,7 @@ export function BusinessCalculator() {
   const [history, setHistory] = useState<string[]>([]);
 
   const inputDigit = (digit: string) => {
-    if (waitingForOperand) {
+    if (waitingForOperand || display === "Undefined") {
       setDisplay(digit);
       setWaitingForOperand(false);
     } else {
@@ -45,7 +45,7 @@ export function BusinessCalculator() {
     }
   };
 
-  const calculate = (a: number, b: number, op: string): number => {
+  const calculate = (a: number, b: number, op: string): number | null => {
     switch (op) {
       case "+":
         return a + b;
@@ -56,7 +56,7 @@ export function BusinessCalculator() {
         return a * b;
       case "÷":
       case "/":
-        return b === 0 ? 0 : a / b;
+        return b === 0 ? null : a / b;
       default:
         return b;
     }
@@ -69,6 +69,7 @@ export function BusinessCalculator() {
       setPrevValue(inputValue);
     } else if (operator) {
       const result = calculate(prevValue, inputValue, operator);
+      if (result === null) { setDisplay("Undefined"); setPrevValue(null); setOperator(null); setWaitingForOperand(true); return; }
       const rounded = Math.round(result * 10000) / 10000;
       setDisplay(String(rounded));
       setPrevValue(rounded);
@@ -83,6 +84,7 @@ export function BusinessCalculator() {
     const inputValue = parseFloat(display);
     if (operator && prevValue !== null) {
       const result = calculate(prevValue, inputValue, operator);
+      if (result === null) { setDisplay("Undefined"); setPrevValue(null); setOperator(null); setWaitingForOperand(true); return; }
       const rounded = Math.round(result * 10000) / 10000;
       setHistory((prev) => [`${prevValue} ${operator} ${inputValue} = ${rounded}`, ...prev.slice(0, 9)]);
       setDisplay(String(rounded));
@@ -189,7 +191,7 @@ export function BusinessCalculator() {
             <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">
               GST Quick Tax
             </p>
-            <div className="grid grid-cols-5 gap-1.5">
+            <div className="grid grid-cols-4 gap-1.5">
               <button
                 type="button"
                 onClick={() => applyGST(5)}
@@ -218,14 +220,9 @@ export function BusinessCalculator() {
               >
                 +28%
               </button>
-              <button
-                type="button"
-                onClick={() => removeGST(18)}
-                className="rounded-xl border border-amber-200 bg-amber-50 py-2 text-xs font-extrabold text-amber-800 hover:bg-amber-100"
-                title="Extract base price before 18% GST"
-              >
-                -18% Base
-              </button>
+            </div>
+            <div className="mt-1.5 grid grid-cols-4 gap-1.5">
+              {[5, 12, 18, 28].map((rate) => <button key={rate} type="button" onClick={() => removeGST(rate)} className="rounded-xl border border-amber-200 bg-amber-50 py-2 text-xs font-extrabold text-amber-800 hover:bg-amber-100">Base -{rate}%</button>)}
             </div>
           </div>
 

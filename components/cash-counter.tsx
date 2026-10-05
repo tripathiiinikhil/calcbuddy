@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useEffect, useState, useTransition } from "react";
+import { useState, useTransition } from "react";
 import Link from "next/link";
 import { saveCashCount, type CounterFormState } from "@/app/counter/actions";
 import { formatCurrency } from "@/lib/format";
@@ -18,7 +18,7 @@ const DENOMINATIONS = [
   { value: 1, label: "₹1", color: "border-slate-400 bg-slate-50 text-slate-800" },
 ];
 
-export function CashCounter() {
+export function CashCounter({ isLoggedIn = false }: { isLoggedIn?: boolean }) {
   const { showToast } = useToast();
   const [quantities, setQuantities] = useState<Record<number, number>>({
     500: 0,
@@ -34,16 +34,10 @@ export function CashCounter() {
   const [coinsAmount, setCoinsAmount] = useState<number>(0);
   const [notes, setNotes] = useState<string>("");
 
-  const [state, formAction, isPending] = useActionState<CounterFormState, FormData>(
-    saveCashCount,
-    {}
-  );
+  const [isPending, startTransition] = useTransition();
 
-  useEffect(() => {
-    if (state.success) {
-      showToast("Cash count saved successfully!", "success");
-      // Reset form
-      setQuantities({
+  const reset = () => {
+    setQuantities({
         500: 0,
         200: 0,
         100: 0,
@@ -53,13 +47,10 @@ export function CashCounter() {
         5: 0,
         2: 0,
         1: 0,
-      });
-      setCoinsAmount(0);
-      setNotes("");
-    } else if (state.error) {
-      showToast(state.error, "error");
-    }
-  }, [state, showToast]);
+    });
+    setCoinsAmount(0);
+    setNotes("");
+  };
 
   const handleQtyChange = (denom: number, val: string) => {
     const num = parseInt(val, 10);
@@ -80,19 +71,7 @@ export function CashCounter() {
     if (totalCash > 0 && !window.confirm("Are you sure you want to clear all numbers?")) {
       return;
     }
-    setQuantities({
-      500: 0,
-      200: 0,
-      100: 0,
-      50: 0,
-      20: 0,
-      10: 0,
-      5: 0,
-      2: 0,
-      1: 0,
-    });
-    setCoinsAmount(0);
-    setNotes("");
+    reset();
   };
 
   const totalDenominationAmount = DENOMINATIONS.reduce(
@@ -101,6 +80,36 @@ export function CashCounter() {
   );
   const totalCash = totalDenominationAmount + (coinsAmount || 0);
   const totalNotesCount = Object.values(quantities).reduce((a, b) => a + b, 0);
+
+  const handleSave = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (totalCash <= 0) return showToast("Enter at least one note or coin amount.", "error");
+    if (!isLoggedIn) {
+      const report = { id: crypto.randomUUID(), countedAt: new Date().toISOString(), totalAmount: totalCash, coinsAmount, quantities, notes };
+      const stored = JSON.parse(localStorage.getItem("calcbuddy:cash-history") || "[]");
+      localStorage.setItem("calcbuddy:cash-history", JSON.stringify([report, ...stored].slice(0, 30)));
+      showToast("Cash count saved on this device. Log in to keep it across devices.", "success");
+      reset();
+      return;
+    }
+    const formData = new FormData(event.currentTarget);
+    startTransition(async () => {
+      const result: CounterFormState = await saveCashCount({}, formData);
+      if (result.error) showToast(result.error, "error");
+      else { showToast("Cash count saved successfully!", "success"); reset(); }
+    });
+  };
+
+  const handleShare = async () => {
+    if (totalCash <= 0) return showToast("Enter a cash count before sharing.", "error");
+    const lines = DENOMINATIONS.filter(({ value }) => quantities[value] > 0).map(({ value, label }) => `${label} × ${quantities[value]} = ${formatCurrency(value * quantities[value])}`);
+    if (coinsAmount > 0) lines.push(`Coins = ${formatCurrency(coinsAmount)}`);
+    const text = ["CalcBuddy — Cash Count", "", `Date: ${new Date().toLocaleString("en-IN")}`, "", ...lines, "", `TOTAL CASH: ${formatCurrency(totalCash)}`].join("\n");
+    try {
+      if (navigator.share) await navigator.share({ title: "CalcBuddy — Cash Count", text });
+      else { await navigator.clipboard.writeText(text); showToast("Cash count copied to clipboard.", "success"); }
+    } catch (error) { if ((error as DOMException).name !== "AbortError") showToast("Could not share this cash count.", "error"); }
+  };
 
   return (
     <div className="space-y-6">
@@ -141,12 +150,13 @@ export function CashCounter() {
             >
               Clear
             </button>
+            <button type="button" onClick={handleShare} className="rounded-lg bg-white/20 px-3 py-1.5 text-xs font-semibold text-white hover:bg-white/30 transition-colors">Share</button>
           </div>
         </div>
       </div>
 
       {/* Main Counting Form */}
-      <form action={formAction} className="space-y-4">
+      <form onSubmit={handleSave} className="space-y-4">
         <div className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
           <div className="border-b border-slate-100 bg-slate-50 px-4 py-3 sm:px-6">
             <div className="grid grid-cols-12 text-xs font-semibold uppercase tracking-wider text-slate-500">
@@ -293,7 +303,7 @@ export function CashCounter() {
             className="ui-button flex-1 min-h-12 rounded-xl bg-brand-600 px-6 font-bold text-white shadow-sm hover:bg-brand-700 disabled:opacity-60"
           >
             {isPending && <span className="spinner" aria-hidden="true" />}
-            {isPending ? "Saving count…" : `Save Cash Count (${formatCurrency(totalCash)})`}
+            {isPending ? "Saving count…" : isLoggedIn ? `Save Cash Count (${formatCurrency(totalCash)})` : "Save on this device"}
           </button>
         </div>
       </form>

@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { formatCurrency, formatDate } from "@/lib/format";
 import { deleteEstimate } from "@/app/estimates/actions";
 import { useToast } from "@/components/toast-provider";
+import { BusinessAvatar } from "@/components/business-avatar";
 
 export interface EstimateItemDetail {
   id: string;
@@ -33,16 +34,21 @@ export function PrintableEstimate({
   estimate,
   businessName,
   businessType,
+  businessLogoUrl,
 }: {
   estimate: EstimateFull;
   businessName: string;
   businessType: string;
+  businessLogoUrl?: string | null;
 }) {
   const router = useRouter();
   const { showToast } = useToast();
   const [isPending, startTransition] = useTransition();
 
   const handlePrint = () => {
+    const clearPrintMode = () => document.body.classList.remove("printing-estimate");
+    document.body.classList.add("printing-estimate");
+    window.addEventListener("afterprint", clearPrintMode, { once: true });
     window.print();
   };
 
@@ -72,7 +78,7 @@ export function PrintableEstimate({
   const discountAmount = Number(estimate.discount_amount || 0);
 
   return (
-    <div className="space-y-6">
+    <div className="estimate-print-page space-y-6">
       {/* Top Actions Bar (Hidden in Print) */}
       <div className="flex flex-wrap items-center justify-between gap-3 print:hidden">
         <Link
@@ -101,15 +107,14 @@ export function PrintableEstimate({
       </div>
 
       {/* Printable Invoice Card */}
-      <div className="rounded-2xl border border-slate-200 bg-white p-6 sm:p-10 shadow-sm print:border-none print:shadow-none print:p-0 print:m-0 text-slate-900">
+      <article className="estimate-print-content rounded-2xl border border-slate-200 bg-white p-6 sm:p-10 shadow-sm print:border-none print:shadow-none print:p-0 print:m-0 text-slate-900">
         {/* Header */}
         <div className="flex flex-wrap items-start justify-between gap-4 border-b border-slate-200 pb-6">
           <div>
-            <div className="inline-flex items-center gap-2">
-              <span className="grid h-8 w-8 place-items-center rounded-lg bg-brand-600 font-bold text-white text-base">
-                ₹
-              </span>
-              <span className="text-xl font-extrabold text-slate-900">{businessName}</span>
+            <p className="mb-3 text-xs font-bold uppercase tracking-wider text-brand-700">CalcBuddy</p>
+            <div className="inline-flex min-w-0 items-center gap-3">
+              <BusinessAvatar name={businessName} logoUrl={businessLogoUrl} className="h-12 w-12 rounded-lg" textClassName="text-sm" />
+              <span className="break-words text-xl font-extrabold text-slate-900">{businessName}</span>
             </div>
             <p className="mt-1 text-xs uppercase tracking-wider text-slate-500 font-medium">
               {businessType.replace("_", " ")} Business
@@ -218,7 +223,7 @@ export function PrintableEstimate({
             <p className="font-semibold text-slate-700 uppercase">Authorized Signatory</p>
           </div>
         </div>
-      </div>
+      </article>
     </div>
   );
 }

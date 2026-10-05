@@ -1,10 +1,8 @@
-import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
+import { AppNav } from "@/components/app-nav";
+import { UtilityHome } from "@/components/utility-home";
+import { getOptionalBusiness } from "@/lib/optional-business";
 
 export default async function Home() {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) redirect("/login");
-  const { data: membership } = await supabase.from("business_members").select("business_id").eq("user_id", user.id).maybeSingle();
-  redirect(membership ? "/dashboard" : "/onboarding");
+  const { business, isLoggedIn } = await getOptionalBusiness();
+  return <div className="min-h-screen bg-slate-50 pb-20 md:pb-8"><AppNav businessName={business?.name} businessType={business?.business_type} logoPath={business?.logo_path} isLoggedIn={isLoggedIn} /><UtilityHome /></div>;
 }
