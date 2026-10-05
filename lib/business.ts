@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { cache } from "react";
 import { createClient } from "@/lib/supabase/server";
 
 export type CurrentBusiness = {
@@ -36,7 +37,7 @@ export async function getBusinessMembership(supabase: SupabaseServerClient, user
   };
 }
 
-export async function getAuthenticatedBusiness() {
+export const getAuthenticatedBusiness = cache(async () => {
   const supabase = await createClient();
   const {
     data: { user },
@@ -70,5 +71,5 @@ export async function getAuthenticatedBusiness() {
       role: membership.role,
     },
   };
-}
+});
 

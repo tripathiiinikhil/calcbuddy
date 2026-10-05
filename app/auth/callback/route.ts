@@ -11,6 +11,10 @@ export async function GET(request: NextRequest) {
   const code = requestUrl.searchParams.get("code");
   const destination = safeNextPath(requestUrl.searchParams.get("next"));
 
+  if (requestUrl.searchParams.get("error") === "access_denied") {
+    return NextResponse.redirect(new URL("/login", requestUrl.origin));
+  }
+
   if (!code) return NextResponse.redirect(new URL("/login?error=verification", requestUrl.origin));
 
   const response = NextResponse.redirect(new URL(destination, requestUrl.origin));

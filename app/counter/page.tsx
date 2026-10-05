@@ -6,9 +6,9 @@ export default async function CounterPage() {
   const { business, isLoggedIn } = await getOptionalBusiness();
 
   return (
-    <div className="min-h-screen bg-slate-50 pb-20 md:pb-12">
-      <AppNav businessName={business?.name} businessType={business?.business_type} logoPath={business?.logo_path} isLoggedIn={isLoggedIn} />
-      <main className="mx-auto max-w-3xl px-4 py-6 sm:px-6">
+    <div className="h-[100dvh] overflow-hidden bg-slate-50 sm:h-auto sm:min-h-screen sm:overflow-visible sm:pb-20 md:pb-12">
+      <AppNav businessName={business?.name} businessType={business?.business_type} logoPath={business?.logo_path} isLoggedIn={isLoggedIn} counterMobile />
+      <main className="mx-auto h-[calc(100dvh-8rem)] max-w-3xl overflow-hidden px-3 py-2 pb-[env(safe-area-inset-bottom)] sm:h-auto sm:overflow-visible sm:px-6 sm:py-6 sm:pb-6">
         <CashCounter isLoggedIn={Boolean(business)} />
       </main>
     </div>

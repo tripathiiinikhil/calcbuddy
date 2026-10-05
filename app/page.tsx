@@ -1,8 +1,5 @@
-import { AppNav } from "@/components/app-nav";
-import { UtilityHome } from "@/components/utility-home";
-import { getOptionalBusiness } from "@/lib/optional-business";
+import { redirect } from "next/navigation";
 
-export default async function Home() {
-  const { business, isLoggedIn } = await getOptionalBusiness();
-  return <div className="min-h-screen bg-slate-50 pb-20 md:pb-8"><AppNav businessName={business?.name} businessType={business?.business_type} logoPath={business?.logo_path} isLoggedIn={isLoggedIn} /><UtilityHome /></div>;
+export default function Home() {
+  redirect("/counter");
 }

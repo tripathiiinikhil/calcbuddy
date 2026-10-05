@@ -52,7 +52,7 @@ export async function signIn(_: FormState, formData: FormData): Promise<FormStat
     .eq("user_id", user.id)
     .maybeSingle();
 
-  redirect(!membershipError && !membership ? "/onboarding" : "/dashboard");
+  redirect(!membershipError && !membership ? "/onboarding" : "/counter");
 }
 
 export async function signUp(_: FormState, formData: FormData): Promise<FormState> {

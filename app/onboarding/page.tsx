@@ -25,7 +25,7 @@ export default async function OnboardingPage() {
     .maybeSingle();
 
   if (membership) {
-    redirect("/dashboard");
+    redirect("/counter");
   }
 
   return <OnboardingFlow />;

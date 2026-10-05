@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useActionState, useEffect, useRef, useState } from "react";
 import { resendVerification, signIn, signUp, type FormState } from "@/app/auth/actions";
 import { useToast } from "@/components/toast-provider";
+import { createClient } from "@/lib/supabase/client";
 
 const initialState: FormState = {};
 
@@ -13,6 +14,7 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
   const isLogin = mode === "login";
   const { showToast } = useToast();
   const lastNotice = useRef<string | undefined>(undefined);
+  const [googlePending, setGooglePending] = useState(false);
 
   useEffect(() => {
     const notice = state.error ?? state.message;
@@ -23,6 +25,25 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
   }, [showToast, state.error, state.message]);
 
   if (!isLogin && state.sent && state.email) return <VerificationNotice email={state.email} message={state.message} />;
+
+  const signInWithGoogle = async () => {
+    setGooglePending(true);
+    try {
+      const redirectTo = new URL("/auth/callback?next=/onboarding", window.location.origin).toString();
+      const { error } = await createClient().auth.signInWithOAuth({
+        provider: "google",
+        options: { redirectTo },
+      });
+
+      if (error) {
+        showToast("Google sign-in could not be started. Please try again.", "error");
+        setGooglePending(false);
+      }
+    } catch {
+      showToast("Google sign-in could not be started. Please try again.", "error");
+      setGooglePending(false);
+    }
+  };
 
   return (
     <form action={formAction} className="mt-4 space-y-4" noValidate>
@@ -76,11 +97,29 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
 
       <button
         type="submit"
-        disabled={pending}
+        disabled={pending || googlePending}
         className="ui-button mt-2 h-12 w-full rounded-xl bg-brand-500 hover:bg-brand-600 font-bold text-white shadow-sm transition-all hover:shadow-md disabled:opacity-60"
       >
         {pending && <span className="spinner" aria-hidden="true" />}
         {pending ? "Please wait…" : isLogin ? "Sign in to CalcBuddy" : "Create your account"}
+      </button>
+
+      <div className="flex items-center gap-3 pt-1" aria-hidden="true">
+        <span className="h-px flex-1 bg-slate-200" />
+        <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">or</span>
+        <span className="h-px flex-1 bg-slate-200" />
+      </div>
+
+      <button
+        type="button"
+        onClick={signInWithGoogle}
+        disabled={pending || googlePending}
+        className="ui-button h-12 w-full rounded-full bg-[#4285F4] px-4 font-bold text-white shadow-sm transition-all hover:bg-[#357ae8] disabled:opacity-60"
+      >
+        <span className="grid h-9 w-9 place-items-center rounded-full bg-white" aria-hidden="true">
+          <GoogleMark />
+        </span>
+        {googlePending ? "Connecting to Google…" : "Continue with Google"}
       </button>
 
       <div className="pt-2 text-center text-sm text-slate-600">
@@ -93,6 +132,17 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
         </Link>
       </div>
     </form>
+  );
+}
+
+function GoogleMark() {
+  return (
+    <svg viewBox="0 0 18 18" className="h-5 w-5" aria-hidden="true">
+      <path fill="#EA4335" d="M17.64 9.205c0-.639-.057-1.252-.164-1.841H9v3.481h4.844a4.14 4.14 0 0 1-1.796 2.716v2.258h2.909c1.702-1.567 2.683-3.874 2.683-6.614Z" />
+      <path fill="#4285F4" d="M9 18c2.43 0 4.467-.806 5.957-2.181l-2.909-2.258c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.037-3.71H.956v2.331A9 9 0 0 0 9 18Z" />
+      <path fill="#FBBC05" d="M3.963 10.71A5.41 5.41 0 0 1 3.681 9c0-.593.102-1.17.282-1.71V4.959H.956A9 9 0 0 0 0 9c0 1.452.348 2.827.956 4.041l3.007-2.331Z" />
+      <path fill="#34A853" d="M9 3.58c1.322 0 2.507.454 3.44 1.345l2.581-2.58C13.463.891 11.426 0 9 0A9 9 0 0 0 .956 4.959l3.007 2.331C4.672 5.164 6.656 3.58 9 3.58Z" />
+    </svg>
   );
 }
 

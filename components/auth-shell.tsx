@@ -13,10 +13,10 @@ export function AuthShell({
   mode?: "login" | "signup";
 }) {
   return (
-    <main className="flex min-h-screen items-center justify-center bg-slate-50 px-4 py-8 sm:px-6 lg:px-8">
-      <div className="w-full max-w-5xl overflow-hidden rounded-3xl border border-slate-200/80 bg-white shadow-xl shadow-slate-200/50 lg:grid lg:grid-cols-12">
+    <main className="flex min-h-screen w-full items-center justify-center bg-white sm:bg-slate-50 p-0 sm:px-6 lg:px-8">
+      <div className="w-full max-w-5xl min-h-screen sm:min-h-0 sm:rounded-3xl sm:border sm:border-slate-200/80 bg-white sm:shadow-xl sm:shadow-slate-200/50 lg:grid lg:grid-cols-12 overflow-hidden">
         {/* Left: Authentication Form Column */}
-        <section className="flex flex-col justify-between p-6 sm:p-10 lg:col-span-6 xl:p-12">
+        <section className="flex flex-col justify-between min-h-screen sm:min-h-0 px-5 py-6 sm:p-10 lg:col-span-6 xl:p-12">
           <div>
             <div className="flex items-center justify-between">
               <Brand size="md" />

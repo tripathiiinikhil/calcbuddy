@@ -81,6 +81,7 @@ export async function saveCashCount(
 
     revalidatePath("/counter");
     revalidatePath("/counter/history");
+    revalidatePath("/history");
     revalidatePath("/dashboard");
 
     return { success: true, reportId: report.id };
@@ -106,6 +107,7 @@ export async function deleteCashCount(reportId: string): Promise<{ success?: boo
 
     revalidatePath("/counter");
     revalidatePath("/counter/history");
+    revalidatePath("/history");
     revalidatePath("/dashboard");
 
     return { success: true };

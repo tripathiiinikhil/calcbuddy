@@ -67,9 +67,9 @@ export async function createBusiness(_: FormState, formData: FormData): Promise<
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/login");
   const { data: existing } = await supabase.from("business_members").select("business_id").eq("user_id", user.id).maybeSingle();
-  if (existing) redirect("/dashboard");
+  if (existing) redirect("/counter");
 
   const { error } = await supabase.rpc("create_business_with_owner", { p_name: name, p_business_type: dbType });
   if (error) return { error: "We could not save your business. Please try again." };
-  redirect("/dashboard");
+  redirect("/counter");
 }

@@ -2,7 +2,6 @@ import { AppNav } from "@/components/app-nav";
 import { BusinessProfileForm } from "@/components/business-profile-form";
 import { AppearancePicker } from "@/components/appearance-picker";
 import { getAuthenticatedBusiness } from "@/lib/business";
-import { businessLogoUrl } from "@/lib/logo";
 
 export default async function SettingsPage() {
   const { business } = await getAuthenticatedBusiness();

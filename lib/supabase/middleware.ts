@@ -4,6 +4,16 @@ import { getSupabaseConfig } from "@/lib/env";
 
 export async function updateSession(request: NextRequest) {
   let response = NextResponse.next({ request });
+  const allCookies = request.cookies.getAll();
+  const hasAuthCookie = allCookies.some(
+    (c) => c.name.startsWith("sb-") || c.name.includes("auth-token")
+  );
+
+  // If there are no auth cookies, skip remote network call to Supabase
+  if (!hasAuthCookie) {
+    return response;
+  }
+
   const { supabaseUrl, supabasePublishableKey } = getSupabaseConfig();
   const supabase = createServerClient(
     supabaseUrl,
