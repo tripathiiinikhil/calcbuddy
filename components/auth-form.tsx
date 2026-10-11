@@ -8,8 +8,8 @@ import { createClient } from "@/lib/supabase/client";
 
 const initialState: FormState = {};
 
-export function AuthForm({ mode }: { mode: "login" | "signup" }) {
-  const action = mode === "login" ? signIn : signUp;
+export function AuthForm({ mode, next }: { mode: "login" | "signup"; next?: string }) {
+  const action = mode === "login" ? signIn.bind(null, next) : signUp;
   const [state, formAction, pending] = useActionState(action, initialState);
   const isLogin = mode === "login";
   const { showToast } = useToast();
@@ -29,10 +29,11 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
   const signInWithGoogle = async () => {
     setGooglePending(true);
     try {
-      const redirectTo = new URL("/auth/callback?next=/onboarding", window.location.origin).toString();
+      const callbackUrl = new URL("/auth/callback", window.location.origin);
+      callbackUrl.searchParams.set("next", next ?? "/onboarding");
       const { error } = await createClient().auth.signInWithOAuth({
         provider: "google",
-        options: { redirectTo },
+        options: { redirectTo: callbackUrl.toString() },
       });
 
       if (error) {

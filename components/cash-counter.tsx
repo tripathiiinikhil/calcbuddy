@@ -1,3 +1,4 @@
+"use client";
 import React, { memo } from "react";
 
 // Memoized row for a denomination entry to avoid re‑rendering the whole list on each quantity change
@@ -204,11 +205,12 @@ export function CashCounter({ isLoggedIn = false }: { isLoggedIn?: boolean }) {
       `GRAND TOTAL: ${formatCurrency(totalCash)}`,
     ].join("\n");
 
+    if (!navigator.share) {
+      showToast("Sharing is not available on this device.", "error");
+      return;
+    }
+
     try {
-      if (!navigator.share) {
-        showToast("Sharing is not available on this device.", "error");
-        return;
-      }
       await navigator.share({ title: "CalcBuddy Cash Count Receipt", text });
     } catch (error) {
       if ((error as DOMException).name === "AbortError") return;

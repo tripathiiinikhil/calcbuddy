@@ -6,6 +6,10 @@ import { getApplicationOrigin } from "@/lib/auth-origin";
 
 export type FormState = { error?: string; message?: string; email?: string; sent?: boolean };
 
+function safeNextPath(value?: string) {
+  return value?.startsWith("/") && !value.startsWith("//") ? value : "/counter";
+}
+
 function value(formData: FormData, name: string) {
   const raw = formData.get(name);
   return typeof raw === "string" ? raw.trim() : "";
@@ -34,7 +38,7 @@ function authErrorMessage(error: unknown, action: "signup" | "resend") {
   return "Supabase could not complete this request. Please try again.";
 }
 
-export async function signIn(_: FormState, formData: FormData): Promise<FormState> {
+export async function signIn(nextPath: string | undefined, _: FormState, formData: FormData): Promise<FormState> {
   const email = value(formData, "email");
   const password = value(formData, "password");
   if (!email || !password) return { error: "Enter your email and password." };
@@ -52,7 +56,7 @@ export async function signIn(_: FormState, formData: FormData): Promise<FormStat
     .eq("user_id", user.id)
     .maybeSingle();
 
-  redirect(!membershipError && !membership ? "/onboarding" : "/counter");
+  redirect(!membershipError && !membership ? "/onboarding" : safeNextPath(nextPath));
 }
 
 export async function signUp(_: FormState, formData: FormData): Promise<FormState> {

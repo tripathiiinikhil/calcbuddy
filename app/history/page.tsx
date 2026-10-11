@@ -1,6 +1,6 @@
+import { redirect } from "next/navigation";
 import { AppNav } from "@/components/app-nav";
 import { HistoryView, type CashHistoryReport } from "@/components/history-view";
-import { GuestCashHistory } from "@/components/guest-cash-history";
 import { getOptionalBusiness } from "@/lib/optional-business";
 import { createClient } from "@/lib/supabase/server";
 
@@ -12,17 +12,8 @@ export const metadata = {
 export default async function HistoryPage() {
   const { business, isLoggedIn } = await getOptionalBusiness();
 
-  // If not logged in with a business, show device-saved guest cash history
-  if (!business) {
-    return (
-      <div className="min-h-screen bg-slate-50 pb-20 md:pb-12">
-        <AppNav isLoggedIn={isLoggedIn} />
-        <main className="mx-auto max-w-4xl px-3 py-6 sm:px-6">
-          <GuestCashHistory />
-        </main>
-      </div>
-    );
-  }
+  if (!isLoggedIn) redirect("/login?next=/history");
+  if (!business) redirect("/onboarding");
 
   const supabase = await createClient();
 
@@ -36,7 +27,7 @@ export default async function HistoryPage() {
   const cashReports: CashHistoryReport[] = (reports as any) || [];
 
   return (
-    <div className="min-h-screen bg-slate-50 pb-20 md:pb-12">
+    <div className="min-h-screen bg-slate-50 pb-20 lg:pb-12">
       <AppNav
         businessName={business.name}
         businessType={business.business_type}

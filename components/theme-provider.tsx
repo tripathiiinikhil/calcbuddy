@@ -13,8 +13,8 @@ function applyTheme(theme: ThemePreference) {
 }
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [theme, setThemeState] = useState<ThemePreference>("system");
-  useEffect(() => { const stored = localStorage.getItem("calcbuddy:theme") as ThemePreference | null; const next = stored === "light" || stored === "dark" || stored === "system" ? stored : "system"; setThemeState(next); applyTheme(next); }, []);
+  const [theme, setThemeState] = useState<ThemePreference>("light");
+  useEffect(() => { const stored = localStorage.getItem("calcbuddy:theme") as ThemePreference | null; const next = stored === "light" || stored === "dark" || stored === "system" ? stored : "light"; setThemeState(next); applyTheme(next); }, []);
   useEffect(() => { const listener = () => theme === "system" && applyTheme(theme); const media = window.matchMedia("(prefers-color-scheme: dark)"); media.addEventListener("change", listener); return () => media.removeEventListener("change", listener); }, [theme]);
   const setTheme = (next: ThemePreference) => { setThemeState(next); localStorage.setItem("calcbuddy:theme", next); applyTheme(next); };
   return <ThemeContext.Provider value={{ theme, setTheme }}>{children}</ThemeContext.Provider>;

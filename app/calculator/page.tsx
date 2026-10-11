@@ -6,7 +6,7 @@ export default async function CalculatorPage() {
   const { business, isLoggedIn } = await getOptionalBusiness();
 
   return (
-    <div className="min-h-screen bg-slate-50 pb-20 md:pb-12">
+    <div className="min-h-screen bg-slate-50 pb-20 lg:pb-12">
       <AppNav businessName={business?.name} businessType={business?.business_type} logoPath={business?.logo_path} isLoggedIn={isLoggedIn} />
       <main className="mx-auto max-w-xl px-4 py-12 sm:px-6 text-center">
         <div className="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">

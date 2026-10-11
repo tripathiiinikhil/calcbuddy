@@ -1,8 +1,9 @@
 import { AuthForm } from "@/components/auth-form";
 import { AuthShell } from "@/components/auth-shell";
 
-export default async function LoginPage({ searchParams }: { searchParams: Promise<{ error?: string }> }) {
+export default async function LoginPage({ searchParams }: { searchParams: Promise<{ error?: string; next?: string }> }) {
   const params = await searchParams;
+  const next = params.next?.startsWith("/") && !params.next.startsWith("//") ? params.next : undefined;
   return (
     <AuthShell
       mode="login"
@@ -14,7 +15,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
           We could not confirm that email link. Please request a new verification email.
         </p>
       )}
-      <AuthForm mode="login" />
+      <AuthForm mode="login" next={next} />
     </AuthShell>
   );
 }

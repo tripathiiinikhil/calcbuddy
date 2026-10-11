@@ -24,7 +24,7 @@ export default async function EstimateDetailPage({
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 pb-20 md:pb-12 print:bg-white print:p-0">
+    <div className="min-h-screen bg-slate-50 pb-20 lg:pb-12 print:bg-white print:p-0">
       <div className="print:hidden">
         <AppNav businessName={business.name} businessType={business.business_type} logoPath={business.logo_path} isLoggedIn />
       </div>
