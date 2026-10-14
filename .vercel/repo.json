@@ -1,0 +1,11 @@
+{
+  "remoteName": "origin",
+  "projects": [
+    {
+      "id": "prj_mGIKwFlGiwsJTKXtpzyYBuFVyMRQ",
+      "name": "calcbuddy",
+      "directory": ".",
+      "orgId": "team_Z8em3UPtpI9PiXm81vYa1xv3"
+    }
+  ]
+}

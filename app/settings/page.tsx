@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { AppNav } from "@/components/app-nav";
 import { BusinessProfileForm } from "@/components/business-profile-form";
+import { SoundSettingToggle } from "@/components/sound-setting-toggle";
+import { PwaInstallRow } from "@/components/pwa-install";
 import { signOut } from "@/app/auth/actions";
 import { getOptionalBusiness } from "@/lib/optional-business";
 
@@ -39,8 +41,10 @@ export default async function SettingsPage() {
             </section>
           )}
 
-          <section>
-            <h2 className="mb-2 text-xs font-bold uppercase tracking-wider text-slate-500">App</h2>
+          <section className="space-y-3">
+            <h2 className="text-xs font-bold uppercase tracking-wider text-slate-500">App Preferences</h2>
+            <PwaInstallRow />
+            <SoundSettingToggle />
             <Link href="/history" className="flex min-h-20 items-center gap-3 rounded-2xl border border-slate-200 bg-white px-4 shadow-xs transition-colors hover:bg-slate-50">
               <span aria-hidden="true" className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-brand-50 text-xl text-brand-700">◷</span>
               <span className="min-w-0 flex-1">
@@ -117,6 +121,12 @@ export default async function SettingsPage() {
               </div>
             </section>
           )}
+
+          <section className="space-y-3">
+            <h2 className="text-xs font-bold uppercase tracking-wider text-slate-500">App Preferences</h2>
+            <PwaInstallRow />
+            <SoundSettingToggle />
+          </section>
 
           <section className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xs">
             <a
