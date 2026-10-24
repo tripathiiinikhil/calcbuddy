@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut } from "@/app/auth/actions";
@@ -8,7 +9,6 @@ import { Brand } from "@/components/brand";
 type AppNavProps = {
   businessName?: string;
   businessType?: string;
-  logoPath?: string | null;
   isLoggedIn?: boolean;
   counterMobile?: boolean;
 };
@@ -20,9 +20,16 @@ const navItems = [
   { href: "/history", label: "History", shortLabel: "History", icon: "◷", disabled: false },
 ];
 
-export function AppNav({ businessName, businessType, logoPath, isLoggedIn = false, counterMobile = false }: AppNavProps) {
+export function AppNav({ businessName, businessType, isLoggedIn = false, counterMobile = false }: AppNavProps) {
   const pathname = usePathname();
-  const active = (href: string) => href === "/counter" ? pathname === "/" || pathname.startsWith(href) : pathname.startsWith(href);
+  const [pendingHref, setPendingHref] = useState<string | null>(null);
+  const activePath = pendingHref ?? pathname;
+  const active = (href: string) => href === "/counter" ? activePath === "/" || activePath.startsWith(href) : activePath.startsWith(href);
+
+  useEffect(() => {
+    setPendingHref(null);
+  }, [pathname]);
+
   const hasMobileUtilityHeader =
     counterMobile || pathname.startsWith("/calculator") || pathname.startsWith("/history") || pathname.startsWith("/settings");
 
@@ -33,13 +40,6 @@ export function AppNav({ businessName, businessType, logoPath, isLoggedIn = fals
           <div className="flex h-16 items-center justify-between px-4">
             <Link href="/counter" className="text-2xl font-extrabold tracking-tight text-slate-900" aria-label="CalcBuddy home">
               Calc<span className="text-brand-500">Buddy</span>
-            </Link>
-            <Link
-              href="/history"
-              className="ui-button min-h-11 rounded-2xl border border-slate-200 bg-white px-3.5 text-sm font-bold text-slate-600 hover:bg-slate-50"
-            >
-              <span aria-hidden="true" className="text-lg leading-none">◷</span>
-              History
             </Link>
           </div>
         </header>
@@ -122,6 +122,7 @@ export function AppNav({ businessName, businessType, logoPath, isLoggedIn = fals
         <div className="grid h-16 grid-cols-5 items-center px-1">
           <Link
             href="/counter"
+            onClick={() => setPendingHref("/counter")}
             aria-current={active("/counter") ? "page" : undefined}
             className={`flex flex-col items-center justify-center gap-0.5 text-xs font-semibold transition-colors ${
               active("/counter") ? "text-[#009f75]" : "text-slate-500 hover:text-slate-800"
@@ -144,6 +145,7 @@ export function AppNav({ businessName, businessType, logoPath, isLoggedIn = fals
 
           <Link
             href="/calculator"
+            onClick={() => setPendingHref("/calculator")}
             aria-current={active("/calculator") ? "page" : undefined}
             className="flex items-center justify-center"
           >
@@ -203,6 +205,7 @@ export function AppNav({ businessName, businessType, logoPath, isLoggedIn = fals
 
           <Link
             href="/history"
+            onClick={() => setPendingHref("/history")}
             aria-current={active("/history") ? "page" : undefined}
             className={`flex flex-col items-center justify-center gap-0.5 text-xs font-semibold transition-colors ${
               active("/history") ? "text-[#009f75]" : "text-slate-500 hover:text-slate-800"
@@ -226,9 +229,10 @@ export function AppNav({ businessName, businessType, logoPath, isLoggedIn = fals
 
           <Link
             href="/settings"
-            aria-current={pathname.startsWith("/settings") ? "page" : undefined}
+            onClick={() => setPendingHref("/settings")}
+            aria-current={active("/settings") ? "page" : undefined}
             className={`flex flex-col items-center justify-center gap-0.5 text-xs font-semibold transition-colors ${
-              pathname.startsWith("/settings") ? "text-[#009f75]" : "text-slate-500 hover:text-slate-800"
+              active("/settings") ? "text-[#009f75]" : "text-slate-500 hover:text-slate-800"
             }`}
           >
             <svg

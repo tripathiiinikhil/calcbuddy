@@ -81,7 +81,6 @@ const DenominationRow = memo(function DenominationRow({
 
 
 import { useState, useTransition, useCallback } from "react";
-import Link from "next/link";
 import { saveCashCount, type CounterFormState } from "@/app/counter/actions";
 import { formatCurrency } from "@/lib/format";
 import { useToast } from "@/components/toast-provider";
@@ -225,9 +224,6 @@ export function CashCounter({ isLoggedIn = false }: { isLoggedIn?: boolean }) {
           <h1 className="text-xl sm:text-2xl font-bold text-slate-900">Cash Counter</h1>
           <p className="text-xs sm:text-sm text-slate-600">Count register notes &amp; coins quickly</p>
         </div>
-        <Link href="/history" className="ui-button flex items-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3 sm:px-3.5 py-1.5 sm:py-2 text-xs sm:text-sm font-semibold text-slate-700 hover:bg-slate-50">
-          <span>📜 History</span>
-        </Link>
       </div>
 
       {/* Sticky / Highlight Total Banner */}

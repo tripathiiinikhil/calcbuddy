@@ -7,7 +7,7 @@ export default async function EstimatesPage() {
 
   return (
     <div className="min-h-screen bg-slate-50 pb-20 lg:pb-12">
-      <AppNav businessName={business?.name} businessType={business?.business_type} logoPath={business?.logo_path} isLoggedIn={isLoggedIn} />
+      <AppNav businessName={business?.name} businessType={business?.business_type} isLoggedIn={isLoggedIn} />
       <main className="mx-auto max-w-xl px-4 py-12 sm:px-6 text-center">
         <div className="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
           <span className="grid h-14 w-14 mx-auto place-items-center rounded-2xl bg-slate-100 text-3xl">

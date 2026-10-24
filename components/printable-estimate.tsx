@@ -34,12 +34,10 @@ export function PrintableEstimate({
   estimate,
   businessName,
   businessType,
-  businessLogoUrl,
 }: {
   estimate: EstimateFull;
   businessName: string;
   businessType: string;
-  businessLogoUrl?: string | null;
 }) {
   const router = useRouter();
   const { showToast } = useToast();
@@ -113,7 +111,7 @@ export function PrintableEstimate({
           <div>
             <p className="mb-3 text-xs font-bold uppercase tracking-wider text-brand-700">CalcBuddy</p>
             <div className="inline-flex min-w-0 items-center gap-3">
-              <BusinessAvatar name={businessName} logoUrl={businessLogoUrl} className="h-12 w-12 rounded-lg" textClassName="text-sm" />
+              <BusinessAvatar name={businessName} className="h-12 w-12 rounded-lg" textClassName="text-sm" />
               <span className="break-words text-xl font-extrabold text-slate-900">{businessName}</span>
             </div>
             <p className="mt-1 text-xs uppercase tracking-wider text-slate-500 font-medium">

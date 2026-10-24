@@ -31,7 +31,6 @@ export default async function HistoryPage() {
       <AppNav
         businessName={business.name}
         businessType={business.business_type}
-        logoPath={business.logo_path}
         isLoggedIn
       />
       <main className="mx-auto max-w-4xl px-3 py-6 sm:px-6">

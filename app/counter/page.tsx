@@ -7,7 +7,7 @@ export default async function CounterPage() {
 
   return (
     <div className="h-[100dvh] overflow-hidden bg-slate-50 sm:h-auto sm:min-h-screen sm:overflow-visible sm:pb-20 lg:pb-12">
-      <AppNav businessName={business?.name} businessType={business?.business_type} logoPath={business?.logo_path} isLoggedIn={isLoggedIn} counterMobile />
+      <AppNav businessName={business?.name} businessType={business?.business_type} isLoggedIn={isLoggedIn} counterMobile />
       <main className="mx-auto h-[calc(100dvh-8rem)] max-w-3xl overflow-hidden px-3 py-2 pb-[env(safe-area-inset-bottom)] sm:h-auto sm:overflow-visible sm:px-6 sm:py-6 sm:pb-6">
         <CashCounter isLoggedIn={Boolean(business)} />
       </main>

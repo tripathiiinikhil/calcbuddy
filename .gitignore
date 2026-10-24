@@ -1,4 +1,5 @@
 node_modules
+auth.perf.json
 .next
 .env.local
 .env*.local

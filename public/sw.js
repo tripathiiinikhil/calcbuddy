@@ -1,11 +1,7 @@
-const CACHE_NAME = 'calcbuddy-static-v1';
+const CACHE_NAME = 'calcbuddy-static-v2';
 
 // Static safe assets to precache
 const PRECACHE_ASSETS = [
-  '/',
-  '/counter',
-  '/calculator',
-  '/manifest.webmanifest',
   '/manifest.json',
   '/icons/icon-192x192.png',
   '/icons/icon-512x512.png',
@@ -83,26 +79,4 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // HTML page navigations -> Network First, fallback to cache
-  if (request.mode === 'navigate') {
-    event.respondWith(
-      fetch(request)
-        .then((response) => {
-          if (response && response.status === 200) {
-            const clone = response.clone();
-            caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
-          }
-          return response;
-        })
-        .catch(async () => {
-          const cached = await caches.match(request);
-          if (cached) return cached;
-          const fallback = await caches.match('/counter');
-          if (fallback) return fallback;
-          return new Response('Offline - CalcBuddy requires an internet connection for this page.', {
-            headers: { 'Content-Type': 'text/plain' },
-          });
-        })
-    );
-  }
 });

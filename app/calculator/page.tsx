@@ -11,7 +11,6 @@ export default async function CalculatorPage() {
       <AppNav
         businessName={business?.name}
         businessType={business?.business_type}
-        logoPath={business?.logo_path}
         isLoggedIn={isLoggedIn}
       />
 

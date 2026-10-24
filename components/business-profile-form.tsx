@@ -6,7 +6,7 @@ import { updateBusinessProfile } from "@/app/settings/actions";
 import { BusinessAvatar } from "@/components/business-avatar";
 import { useToast } from "@/components/toast-provider";
 
-type BusinessProfile = { id: string; name: string; business_type: string; logo_path?: string | null };
+type BusinessProfile = { id: string; name: string; business_type: string };
 const allowedTypes = ["retail", "wholesale", "petrol_pump", "other"];
 
 export function BusinessProfileForm({ business }: { business: BusinessProfile }) {
@@ -22,7 +22,6 @@ export function BusinessProfileForm({ business }: { business: BusinessProfile })
         const result = await updateBusinessProfile({
           name,
           businessType: type,
-          logoPath: business.logo_path ?? null,
         });
         if (result.error) {
           showToast(result.error, "error");

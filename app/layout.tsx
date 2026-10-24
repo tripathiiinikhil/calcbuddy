@@ -7,7 +7,7 @@ import { PwaProvider } from "@/components/pwa-install";
 export const metadata: Metadata = {
   title: "CalcBuddy | Simple business tools",
   description: "Simple tools for everyday business cash counting and calculations.",
-  manifest: "/manifest.webmanifest",
+  manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",

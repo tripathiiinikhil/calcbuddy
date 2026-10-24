@@ -13,7 +13,6 @@ export default async function SettingsPage() {
       <AppNav
         businessName={business?.name}
         businessType={business?.business_type}
-        logoPath={business?.logo_path}
         isLoggedIn={isLoggedIn}
       />
       <main className="mx-auto max-w-2xl space-y-4 px-4 py-5 sm:px-6 sm:py-6">
@@ -45,14 +44,6 @@ export default async function SettingsPage() {
             <h2 className="text-xs font-bold uppercase tracking-wider text-slate-500">App Preferences</h2>
             <PwaInstallRow />
             <SoundSettingToggle />
-            <Link href="/history" className="flex min-h-20 items-center gap-3 rounded-2xl border border-slate-200 bg-white px-4 shadow-xs transition-colors hover:bg-slate-50">
-              <span aria-hidden="true" className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-brand-50 text-xl text-brand-700">◷</span>
-              <span className="min-w-0 flex-1">
-                <span className="block font-bold text-slate-900">History</span>
-                <span className="mt-0.5 block truncate text-sm text-slate-600">View your past cash counts</span>
-              </span>
-              <span aria-hidden="true" className="text-2xl leading-none text-slate-400">›</span>
-            </Link>
           </section>
 
           <section>
